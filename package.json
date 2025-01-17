@@ -1,0 +1,17 @@
+{
+  "name": "mini-reagent-experiment-using-signaali",
+  "private": true,
+  "scripts": {
+    "dev": "shadow-cljs watch app",
+    "release": "shadow-cljs release app"
+  },
+  "devDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-refresh": "^0.14.0",
+    "shadow-cljs": "2.28.20"
+  },
+  "dependencies": {
+    "use-sync-external-store": "1.4.0"
+  }
+}
