@@ -44,6 +44,11 @@
                              #js {:comp tag
                                   :args (next hiccup)})
 
+        (= tag :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
+        (react/createElement reagent-component-wrapper
+                             #js {:comp (fnext hiccup)
+                                  :args (nnext hiccup)})
+
         (= tag :>)
         (let [tag (fnext hiccup)
               [props children] (if (and (> (count hiccup) 2)
@@ -79,6 +84,13 @@
 (defn reagent-sum-component [a b c]
   [:div "reagent sum = " (+ @a @b c)])
 
+(defn reagent-sum-component-with-hooks [a b c]
+  (let [[d set-d] (uix/use-state 1000)]
+    [:div
+     [:button {:onClick (fn [] (set-d inc))} "inc"]
+     " state-d = " d
+     [:div "reagent sum with hooks = " (+ @a @b c d)]]))
+
 (defn react-sum-component [^js props]
   (let [hiccup (use-reactive-node
                  (sr/create-memo
@@ -107,6 +119,7 @@
           [:li
            ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
+           [:f> reagent-sum-component-with-hooks state-a state-b state-c]
 
            ;; React component invocations
            [:> react-sum-component {:a state-a
