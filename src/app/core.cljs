@@ -65,6 +65,15 @@
                                      props ;; Raw, no conversions on the props. The user should pass a #js {}.
                                      (mapv as-element children)))
 
+        (= tag :<>)
+        (let [[props children] (if (and (> (count hiccup) 1)
+                                        (map? (nth hiccup 1)))
+                                 [(nth hiccup 1) (nnext hiccup)]
+                                 [nil (next hiccup)])]
+          (apply react/createElement react/Fragment
+                                     (clj->js props)
+                                     (mapv as-element children)))
+
         :else
         (let [[props children] (if (and (> (count hiccup) 1)
                                         (map? (nth hiccup 1)))
@@ -86,7 +95,7 @@
 
 (defn reagent-sum-component-with-hooks [a b c]
   (let [[d set-d] (uix/use-state 1000)]
-    [:div
+    [:<> {:key "xxx"} ;; Fragments can only have a "key" in their props.
      [:button {:onClick (fn [] (set-d inc))} "inc"]
      " state-d = " d
      [:div "reagent sum with hooks = " (+ @a @b c d)]]))
