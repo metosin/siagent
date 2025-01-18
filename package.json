@@ -2,7 +2,7 @@
   "name": "mini-reagent-experiment-using-signaali",
   "private": true,
   "scripts": {
-    "dev": "shadow-cljs watch app",
+    "dev": "shadow-cljs -A:dev watch app",
     "release": "shadow-cljs release app"
   },
   "devDependencies": {

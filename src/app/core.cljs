@@ -54,6 +54,12 @@
                                      (clj->js props)
                                      (mapv as-element children)))
 
+        (= tag :r>) ;; "r" means "raw". It calls React components.
+        (let [[_ tag props & children] hiccup]
+          (apply react/createElement tag
+                                     props ;; Raw, no conversions on the props. The user should pass a #js {}.
+                                     (mapv as-element children)))
+
         :else
         (let [[props children] (if (and (> (count hiccup) 1)
                                         (map? (nth hiccup 1)))
@@ -99,10 +105,16 @@
            [:button {:onClick (fn [] (set-state-c inc))} "inc"]
            " state-c = " state-c]
           [:li
+           ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
+
+           ;; React component invocations
            [:> react-sum-component {:a state-a
                                     :b state-b
-                                    :c state-c}]]]))))
+                                    :c state-c}]
+           [:r> react-sum-component #js {:a state-a
+                                         :b state-b
+                                         :c state-c}]]]))))
 
 (defonce root
   (dom/create-root (js/document.getElementById "app")))
