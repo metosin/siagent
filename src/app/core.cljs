@@ -1,5 +1,6 @@
 (ns app.core
   (:require ["react" :as react]
+            [clojure.string :as str]
             [signaali.reactive :as sr]
             [uix.core :as uix :refer [defui $]]
             [uix.dom :as dom]))
@@ -27,64 +28,80 @@
 
 (declare as-element)
 
-(defn reagent-component-wrapper [^js props]
-  (let [hiccup (use-reactive-node
-                 (sr/create-memo
-                   (fn []
-                     (apply (.-comp props) (.-args props)))))]
-    (as-element hiccup)))
+(defn- compute-fn-display-name [f]
+  (let [name-fragments (-> (.-name ^js f)
+                           (demunge)
+                           (str/split "/"))]
+    (str (str/join "." (butlast name-fragments))
+         "/"
+         (last name-fragments))))
+
+(defn- get-react-wrapper [^js reagent-component]
+  (when (nil? (.-reactWrapper reagent-component))
+    (let [^js wrapper (fn [^js props]
+                        (let [hiccup (use-reactive-node
+                                       (sr/create-memo
+                                         (fn []
+                                           (apply (.-comp props) (.-args props)))))]
+                          (as-element hiccup)))]
+      (set! (.-displayName wrapper) (compute-fn-display-name reagent-component))
+      (set! (.-reactWrapper reagent-component) wrapper)))
+
+  (.-reactWrapper reagent-component))
 
 (defn as-element [hiccup]
   (cond
     (vector? hiccup)
-    (let [tag (first hiccup)]
+    (let [x (first hiccup)]
       (cond
-        (fn? tag)
-        (react/createElement reagent-component-wrapper
-                             #js {:comp tag
-                                  :args (next hiccup)})
+        (fn? x)
+        (let [[reagent-component & args] hiccup]
+          (react/createElement (get-react-wrapper reagent-component)
+                               #js {:comp reagent-component
+                                    :args args}))
 
-        (= tag :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
-        (react/createElement reagent-component-wrapper
-                             #js {:comp (fnext hiccup)
-                                  :args (nnext hiccup)})
+        (= x :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
+        (let [[_f> reagent-component & args] hiccup]
+          (react/createElement (get-react-wrapper reagent-component)
+                               #js {:comp reagent-component
+                                    :args args}))
 
-        (= tag :>)
-        (let [tag (fnext hiccup)
-              [props children] (if (and (> (count hiccup) 2)
-                                        (map? (nth hiccup 2)))
-                                 [(nth hiccup 2) (next (nnext hiccup))]
-                                 [nil (nnext hiccup)])]
-          (apply react/createElement tag
+        (= x :>)
+        (let [[_> react-component & args] hiccup
+              [props & children] (if (map? (first args))
+                                   args
+                                   (cons nil args))]
+          (apply react/createElement react-component
                                      (clj->js props)
                                      (mapv as-element children)))
 
-        (= tag :r>) ;; "r" means "raw". It calls React components.
-        (let [[_ tag props & children] hiccup]
-          (apply react/createElement tag
+        (= x :r>) ;; "r" means "raw". It calls React components.
+        (let [[_r> react-component props & children] hiccup]
+          (apply react/createElement react-component
                                      props ;; Raw, no conversions on the props. The user should pass a #js {}.
                                      (mapv as-element children)))
 
-        (= tag :<>)
-        (let [[props children] (if (and (> (count hiccup) 1)
-                                        (map? (nth hiccup 1)))
-                                 [(nth hiccup 1) (nnext hiccup)]
-                                 [nil (next hiccup)])]
+        (= x :<>)
+        (let [[_<> & args] hiccup
+              [props & children] (if (map? (first args))
+                                   args
+                                   (cons nil args))]
           (apply react/createElement react/Fragment
                                      (clj->js props)
                                      (mapv as-element children)))
 
-        :else
-        (let [[props children] (if (and (> (count hiccup) 1)
-                                        (map? (nth hiccup 1)))
-                                 [(nth hiccup 1) (nnext hiccup)]
-                                 [nil (next hiccup)])]
-          (apply react/createElement (name tag)
+        :else ;; Representation of a DOM element, like :div or "div"
+        (let [[dom-element & args] hiccup
+              [props & children] (if (map? (first args))
+                                   args
+                                   (cons nil args))]
+          (apply react/createElement (name dom-element)
                                      (clj->js props)
                                      (mapv as-element children)))))
 
     (seq? hiccup)
-    (to-array (mapv as-element hiccup))
+    (let [children hiccup]
+      (to-array (mapv as-element children)))
 
     :else
     hiccup))
@@ -107,9 +124,9 @@
                      [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))])))]
     (as-element hiccup)))
 
-(defn react-component-with-children [^js props]
+(defui react-component-with-children [{:keys [children]}]
   ($ :div "My children are:"
-     ($ :div (.-children props))))
+     ($ :div children)))
 
 (def state-a (sr/create-state 10))
 (def state-b (sr/create-state 0))
