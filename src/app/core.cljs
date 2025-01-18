@@ -75,7 +75,7 @@
                                      (mapv as-element children)))))
 
     (seq? hiccup)
-    (to-array hiccup)
+    (to-array (mapv as-element hiccup))
 
     :else
     hiccup))
@@ -116,6 +116,10 @@
           [:li
            [:button {:onClick (fn [] (set-state-c inc))} "inc"]
            " state-c = " state-c]
+          [:li
+           "Sequence:"
+           (for [index (range 3)]
+             [:div {:key index} "index = " index])]
           [:li
            ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
