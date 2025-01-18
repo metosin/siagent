@@ -107,6 +107,10 @@
                      [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))])))]
     (as-element hiccup)))
 
+(defn react-component-with-children [^js props]
+  ($ :div "My children are:"
+     ($ :div (.-children props))))
+
 (def state-a (sr/create-state 10))
 (def state-b (sr/create-state 0))
 
@@ -129,6 +133,10 @@
            "Sequence:"
            (for [index (range 3)]
              [:div {:key index} "index = " index])]
+          [:li
+           [:> react-component-with-children
+            [:div "child 1"]
+            [:div "child 2"]]]
           [:li
            ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
