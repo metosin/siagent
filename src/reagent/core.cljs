@@ -12,7 +12,7 @@
 (defn dispose! [x]
   (ra/dispose! x))
 
-(defn use-reactive-node [reactive-node]
+(defn use-reactive [reactive-node]
   (let [[subscribe get-snapshot] (react/useMemo (fn []
                                                   ;;(prn "in react/useMemo")
                                                   (let [subscribe (fn [ping-react-that-something-might-have-changed]
@@ -52,7 +52,7 @@
 (defn- get-react-wrapper [^js reagent-component]
   (when (nil? (.-reactWrapper reagent-component))
     (let [^js wrapper (fn [^js props]
-                        (let [hiccup (use-reactive-node
+                        (let [hiccup (use-reactive
                                        (ra/make-reaction
                                          (fn []
                                            (apply (.-comp props) (.-args props)))))]

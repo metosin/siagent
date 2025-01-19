@@ -15,7 +15,7 @@
      [:div "reagent sum with hooks = " (+ @a @b c d)]]))
 
 (defn react-sum-component [^js props]
-  (let [hiccup (r/use-reactive-node
+  (let [hiccup (r/use-reactive
                  (ra/make-reaction
                    (fn []
                      [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))])))]
@@ -36,10 +36,10 @@
          [:ul
           [:li
            [:button {:onClick (fn [] (swap! state-a inc))} "inc"]
-           " state-a = " (r/use-reactive-node state-a)]
+           " state-a = " (r/use-reactive state-a)]
           ["li" {:style {:color "pink"}}
            [:button {:onClick (fn [] (swap! state-b inc))} "inc"]
-           " state-b = " (r/use-reactive-node state-b)]
+           " state-b = " (r/use-reactive state-b)]
           [:li
            [:button {:onClick (fn [] (set-state-c inc))} "inc"]
            " state-c = " state-c]
