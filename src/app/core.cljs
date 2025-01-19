@@ -49,22 +49,31 @@
 
   (.-reactWrapper reagent-component))
 
+(defn- set-key-if-some [js-props key]
+  (cond
+    (nil? key) js-props
+    (nil? js-props) #js {:key (str key)}
+    :else (js* "({...~{}, key: ~{}})" js-props (str key))))
+
 (defn as-element [hiccup]
   (cond
     (vector? hiccup)
-    (let [x (first hiccup)]
+    (let [x (first hiccup)
+          key (-> hiccup meta :key)]
       (cond
         (fn? x)
         (let [[reagent-component & args] hiccup]
           (react/createElement (get-react-wrapper reagent-component)
-                               #js {:comp reagent-component
-                                    :args args}))
+                               (-> #js {:comp reagent-component
+                                        :args args}
+                                   (set-key-if-some key))))
 
         (= x :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
         (let [[_f> reagent-component & args] hiccup]
           (react/createElement (get-react-wrapper reagent-component)
-                               #js {:comp reagent-component
-                                    :args args}))
+                               (-> #js {:comp reagent-component
+                                        :args args}
+                                   (set-key-if-some key))))
 
         (= x :>)
         (let [[_> react-component & args] hiccup
@@ -72,13 +81,15 @@
                                    args
                                    (cons nil args))]
           (apply react/createElement react-component
-                                     (clj->js props)
+                                     (-> (clj->js props)
+                                         (set-key-if-some key))
                                      (mapv as-element children)))
 
         (= x :r>) ;; "r" means "raw". It calls React components.
-        (let [[_r> react-component props & children] hiccup]
+        (let [[_r> react-component js-props & children] hiccup]
           (apply react/createElement react-component
-                                     props ;; Raw, no conversions on the props. The user should pass a #js {}.
+                                     (-> js-props
+                                         (set-key-if-some key))
                                      (mapv as-element children)))
 
         (= x :<>)
@@ -87,7 +98,8 @@
                                    args
                                    (cons nil args))]
           (apply react/createElement react/Fragment
-                                     (clj->js props)
+                                     (-> (clj->js props)
+                                         (set-key-if-some key))
                                      (mapv as-element children)))
 
         :else ;; Representation of a DOM element, like :div or "div"
@@ -96,7 +108,8 @@
                                    args
                                    (cons nil args))]
           (apply react/createElement (name dom-element)
-                                     (clj->js props)
+                                     (-> (clj->js props)
+                                         (set-key-if-some key))
                                      (mapv as-element children)))))
 
     (seq? hiccup)
@@ -147,9 +160,9 @@
            [:button {:onClick (fn [] (set-state-c inc))} "inc"]
            " state-c = " state-c]
           [:li
-           "Sequence:"
+           "Sequences and keys:"
            (for [index (range 3)]
-             [:div {:key index} "index = " index])]
+             ^{:key index} [:div "index = " index])]
           [:li
            [:> react-component-with-children
             [:div "child 1"]
