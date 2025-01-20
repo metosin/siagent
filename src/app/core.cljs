@@ -1,6 +1,5 @@
 (ns app.core
   (:require [reagent.core :as r]
-            [reagent.ratom :as ra]
             [uix.core :as uix :refer [defui $]]
             [uix.dom :as dom]))
 
@@ -10,15 +9,14 @@
 (defn reagent-sum-component-with-hooks [a b c]
   (let [[d set-d] (uix/use-state 1000)]
     [:<> {:key "xxx"} ;; Fragments can only have a "key" in their props.
-     [:button {:onClick (fn [] (set-d inc))} "inc"]
+     [:button {:on-click (fn [] (set-d inc))} "inc"]
      " state-d = " d
      [:div "reagent sum with hooks = " (+ @a @b c d)]]))
 
 (defn react-sum-component [^js props]
   (let [hiccup (r/use-reactive
-                 (ra/make-reaction
-                   (fn []
-                     [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))])))]
+                 (r/reaction
+                   [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))]))]
     (r/as-element hiccup)))
 
 (defui react-component-with-children [{:keys [children]}]
@@ -35,13 +33,13 @@
        (r/as-element
          [:ul
           [:li
-           [:button {:onClick (fn [] (swap! state-a inc))} "inc"]
+           [:button {:on-click (fn [] (swap! state-a inc))} "inc"]
            " state-a = " (r/use-reactive state-a)]
           ["li" {:style {:color "pink"}}
-           [:button {:onClick (fn [] (swap! state-b inc))} "inc"]
+           [:button {:on-click (fn [] (swap! state-b inc))} "inc"]
            " state-b = " (r/use-reactive state-b)]
           [:li
-           [:button {:onClick (fn [] (set-state-c inc))} "inc"]
+           [:button {:on-click (fn [] (set-state-c inc))} "inc"]
            " state-c = " state-c]
           [:li
            "Sequences and keys:"
