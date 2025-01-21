@@ -31,7 +31,10 @@
     ($ :<>
        ($ :main "Hello, world!")
        (r/as-element
-         [:ul
+         [:ul.my-class1.my-class2#my-id {:class [:my-class3 :my-class4]}
+          [:li
+           [:#some-id "This is in a div."]
+           [:.some-class "This too."]]
           [:li
            [:button {:on-click (fn [] (swap! state-a inc))} "inc"]
            " state-a = " (r/use-reactive state-a)]

@@ -16,6 +16,17 @@
          "/"
          (last name-fragments))))
 
+(defn parse-dom-element [s]
+  (reduce (fn [acc part]
+            (case (subs part 0 1)
+              "." (update acc :classes conj (subs part 1))
+              "#" (assoc acc :id (subs part 1))
+              (assoc acc :element part)))
+          {:element "div"
+           :id nil
+           :classes []}
+          (re-seq #"[#.]?[^#.]+" s)))
+
 (defn- capitalize [s]
   (if (< (count s) 2)
     (str/upper-case s)

@@ -2,6 +2,8 @@
   (:require-macros [reagent.core :refer [reaction]])
   (:refer-clojure :exclude [atom])
   (:require ["react" :as react]
+            [clojure.set :as set]
+            [clojure.string :as str]
             [reagent.ratom :as ra]
             [reagent.util :as ru]
             [signaali.reactive :as sr]))
@@ -96,11 +98,20 @@
 
         :else ;; Representation of a DOM element, like :div or "div"
         (let [[dom-element & args] hiccup
+              {:keys [element id classes]} (ru/parse-dom-element (name dom-element))
               [props & children] (if (map? (first args))
                                    args
-                                   (cons nil args))]
-          (apply react/createElement (name dom-element)
-                                     (-> (ru/clj->camel-js-props props)
+                                   (cons nil args))
+              classes (into classes (map name) (:class props))]
+          (apply react/createElement element
+                                     (-> props
+                                         (cond-> id (assoc :id id))
+                                         (cond->
+                                           (seq classes)
+                                           (-> (dissoc :class)
+                                               (assoc :className (str/join " " classes))))
+                                         (set/rename-keys {:for :htmlFor})
+                                         (ru/clj->camel-js-props)
                                          (ru/set-key-if-some key))
                                      (mapv as-element children)))))
 
