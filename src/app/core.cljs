@@ -6,6 +6,14 @@
 (defn reagent-sum-component [a b c]
   [:div "reagent sum = " (+ @a @b c)])
 
+(defn reagent-sum-component-fn-in-fn [a b c]
+  (let [d (r/atom 1000)]
+    (fn [a b c]
+      [:<>
+       [:button {:on-click (fn [] (swap! d inc))} "inc"]
+       " state-d = " @d
+       [:div "reagent sum fn-in-fn = " (+ @a @b c @d)]])))
+
 (defn reagent-sum-component-with-hooks [a b c]
   (let [[d set-d] (uix/use-state 1000)]
     [:<> {:key "xxx"} ;; Fragments can only have a "key" in their props.
@@ -55,6 +63,7 @@
           [:li
            ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
+           [reagent-sum-component-fn-in-fn state-a state-b state-c]
            [:f> reagent-sum-component-with-hooks state-a state-b state-c]
 
            ;; React component invocations
