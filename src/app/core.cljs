@@ -14,6 +14,11 @@
        " state-d = " @d
        [:div "reagent sum fn-in-fn = " (+ @a @b c @d)]])))
 
+(defn reagent-sum-component-with-let [a b c]
+  (r/with-let [_ (prn "with-let starts")]
+    [:div "reagent sum with let = " (+ @a @b c)]
+    (finally (prn "with-let finishes"))))
+
 (defn reagent-sum-component-with-hooks [a b c]
   (let [[d set-d] (uix/use-state 1000)]
     [:<> {:key "xxx"} ;; Fragments can only have a "key" in their props.
@@ -33,6 +38,18 @@
 
 (def state-a (r/atom 10))
 (def state-b (r/atom 0))
+
+(defn section [name children]
+  (let [is-showing (r/atom false)]
+    (fn [name children]
+      [:div
+       [:label
+        [:input {:type "checkbox"
+                 :value @is-showing
+                 :onChange #(swap! is-showing not)}]
+        name]
+       (when @is-showing
+         children)])))
 
 (defui app []
   (let [[state-c set-state-c] (uix/use-state 100)]
@@ -64,6 +81,8 @@
            ;; Reagent component invocations
            [reagent-sum-component state-a state-b state-c]
            [reagent-sum-component-fn-in-fn state-a state-b state-c]
+           [section "With let"
+            [reagent-sum-component-with-let state-a state-b state-c]]
            [:f> reagent-sum-component-with-hooks state-a state-b state-c]
 
            ;; React component invocations

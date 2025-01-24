@@ -148,3 +148,38 @@
 (defmacro reaction [& bodies]
   `(reagent.ratom/make-reaction
      (fn [] ~@bodies)))
+
+#?(:cljs
+   (defn use-eval-once [f]
+     ;; We do not use built-in `react/useMemo` or `react/useEffect`
+     ;; because f may both contain side effects and return a value.
+     (let [result-ref (react/useRef nil)]
+       (when (nil? (.-current result-ref))
+         (set! (.-current result-ref) (f)))
+       (.-current result-ref))))
+
+#?(:cljs
+   (defn use-finally [f]
+     (react/useEffect (fn [] f)
+                      #js [])))
+
+(defmacro with-let [bindings & bodies]
+  (assert (vector? bindings)
+          (str "with-let bindings must be a vector, not " (pr-str bindings)))
+  (let [binding-vars (for [[var _expr] (partition 2 bindings)] var)
+        binding-exprs (for [[_var expr] (partition 2 bindings)] expr)
+
+        ;; Looks for a potential `finally` clause at the end of `bodies`
+        [body-exprs finally-exprs] (let [last-expr (last bodies)]
+                                     (if (and (list? last-expr)
+                                              (= (first last-expr) 'finally))
+                                       [(butlast bodies) (next last-expr)]
+                                       [bodies nil]))]
+    `(let [[~@binding-vars] (reagent.core/use-eval-once
+                              (fn []
+                                [~@binding-exprs]))]
+       ~(when (some? finally-exprs)
+          `(reagent.core/use-finally
+             (fn []
+               ~@finally-exprs)))
+       ~@body-exprs)))
