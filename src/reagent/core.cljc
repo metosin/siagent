@@ -1,11 +1,11 @@
 (ns reagent.core
-  #?(:cljs (:require-macros [reagent.core :refer [reaction]]))
+  #?(:cljs (:require-macros [reagent.core :refer [reaction with-let]]))
   (:refer-clojure :exclude [atom])
   (:require #?(:cljs ["react" :as react])
             [clojure.set :as set]
             [clojure.string :as str]
+            [reagent.impl.core :as impl]
             [reagent.ratom :as ra]
-            #?(:cljs [reagent.util :as ru])
             [signaali.reactive :as sr]))
 
 (defn atom [x]
@@ -66,7 +66,7 @@
                                               @reactive
                                               reactive)))]
                              (as-element hiccup)))]
-         (set! (.-displayName wrapper) (ru/compute-fn-display-name reagent-component))
+         (set! (.-displayName wrapper) (impl/compute-fn-display-name reagent-component))
          (set! (.-reactWrapper reagent-component) wrapper)))
 
      (.-reactWrapper reagent-component)))
@@ -83,14 +83,14 @@
              (react/createElement (get-react-wrapper reagent-component)
                                   (-> #js {:comp reagent-component
                                            :args args}
-                                      (ru/set-key-if-some key))))
+                                      (impl/set-key-if-some key))))
 
            (= x :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
            (let [[_f> reagent-component & args] hiccup]
              (react/createElement (get-react-wrapper reagent-component)
                                   (-> #js {:comp reagent-component
                                            :args args}
-                                      (ru/set-key-if-some key))))
+                                      (impl/set-key-if-some key))))
 
            (= x :>)
            (let [[_> react-component & args] hiccup
@@ -98,15 +98,15 @@
                                       args
                                       (cons nil args))]
              (apply react/createElement react-component
-                                        (-> (ru/clj->camel-js-props props)
-                                            (ru/set-key-if-some key))
+                                        (-> (impl/clj->camel-js-props props)
+                                            (impl/set-key-if-some key))
                                         (mapv as-element children)))
 
            (= x :r>) ;; "r" means "raw". It calls React components.
            (let [[_r> react-component js-props & children] hiccup]
              (apply react/createElement react-component
                                         (-> js-props
-                                            (ru/set-key-if-some key))
+                                            (impl/set-key-if-some key))
                                         (mapv as-element children)))
 
            (= x :<>)
@@ -116,12 +116,12 @@
                                       (cons nil args))]
              (apply react/createElement react/Fragment
                                         (-> (clj->js props)
-                                            (ru/set-key-if-some key))
+                                            (impl/set-key-if-some key))
                                         (mapv as-element children)))
 
            :else ;; Representation of a DOM element, like :div or "div"
            (let [[dom-element & args] hiccup
-                 {:keys [element id classes]} (ru/parse-dom-element (name dom-element))
+                 {:keys [element id classes]} (impl/parse-dom-element (name dom-element))
                  [props & children] (if (map? (first args))
                                       args
                                       (cons nil args))
@@ -134,8 +134,8 @@
                                               (-> (dissoc :class)
                                                   (assoc :className (str/join " " classes))))
                                             (set/rename-keys {:for :htmlFor})
-                                            (ru/clj->camel-js-props)
-                                            (ru/set-key-if-some key))
+                                            (impl/clj->camel-js-props)
+                                            (impl/set-key-if-some key))
                                         (mapv as-element children)))))
 
        (seq? hiccup)
@@ -149,20 +149,6 @@
   `(reagent.ratom/make-reaction
      (fn [] ~@bodies)))
 
-#?(:cljs
-   (defn use-eval-once [f]
-     ;; We do not use built-in `react/useMemo` or `react/useEffect`
-     ;; because f may both contain side effects and return a value.
-     (let [result-ref (react/useRef nil)]
-       (when (nil? (.-current result-ref))
-         (set! (.-current result-ref) (f)))
-       (.-current result-ref))))
-
-#?(:cljs
-   (defn use-finally [f]
-     (react/useEffect (fn [] f)
-                      #js [])))
-
 (defmacro with-let [bindings & bodies]
   (assert (vector? bindings)
           (str "with-let bindings must be a vector, not " (pr-str bindings)))
@@ -175,11 +161,11 @@
                                               (= (first last-expr) 'finally))
                                        [(butlast bodies) (next last-expr)]
                                        [bodies nil]))]
-    `(let [[~@binding-vars] (reagent.core/use-eval-once
+    `(let [[~@binding-vars] (impl/use-eval-once
                               (fn []
                                 [~@binding-exprs]))]
        ~(when (some? finally-exprs)
-          `(reagent.core/use-finally
+          `(impl/use-finally
              (fn []
                ~@finally-exprs)))
        ~@body-exprs)))
