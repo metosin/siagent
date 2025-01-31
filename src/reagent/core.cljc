@@ -169,3 +169,16 @@
              (fn []
                ~@finally-exprs)))
        ~@body-exprs)))
+
+(defn adapt-react-class [react-component]
+  (fn reagent-component [& args]
+    (let [[props & children] (if (map? (first args))
+                               args
+                               (cons nil args))]
+      (apply react/createElement react-component
+                                 (clj->js props)
+                                 (mapv as-element children)))))
+
+(defn reactify-component [reagent-component]
+  (fn react-component [^js props]
+    (as-element [reagent-component (js->clj props)])))
