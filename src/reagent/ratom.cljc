@@ -16,4 +16,4 @@
   (sr/create-memo f {:propagation-filter-fn not=}))
 
 (defn reactive? []
-  (pos? (stack/count sr/observer-stack)))
+  (pos? (stack/count #'sr/observer-stack)))
