@@ -1,5 +1,5 @@
 {
-  "name": "mini-reagent-experiment-using-signaali",
+  "name": "signaa-gent",
   "private": true,
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app",

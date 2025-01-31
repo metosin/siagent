@@ -27,10 +27,10 @@
      [:div "reagent sum with hooks = " (+ @a @b c d)]]))
 
 (defn react-sum-component [^js props]
-  (let [hiccup (r/use-reactive
-                 (r/reaction
-                   [:div "react sum = " (+ @(.-a props) @(.-b props) (.-c props))]))]
-    (r/as-element hiccup)))
+  (let [a (r/use-reactive (.-a props))
+        b (r/use-reactive (.-b props))
+        c (.-c props)]
+    ($ :div "react sum = " (+ a b c))))
 
 (defui react-component-with-children [{:keys [children]}]
   ($ :div "My children are:"
@@ -39,7 +39,7 @@
 (def state-a (r/atom 10))
 (def state-b (r/atom 0))
 
-(defn section [name children]
+(defn section [_name _children]
   (let [is-showing (r/atom false)]
     (fn [name children]
       [:div
