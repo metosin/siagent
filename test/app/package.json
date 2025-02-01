@@ -1,5 +1,5 @@
 {
-  "name": "signaa-gent example",
+  "name": "app",
   "private": true,
   "scripts": {
     "dev": "shadow-cljs -A:dev watch app",
