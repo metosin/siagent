@@ -4,6 +4,5 @@
 
  :builds {:app
           {:target :browser
-           :modules {:main {:entries [app.core]
-                            :init-fn app.core/init}}
+           :modules {:main {:init-fn app.core/init}}
            :devtools {:preloads [uix.preload devtools.preload]}}}}

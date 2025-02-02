@@ -2,8 +2,9 @@
   "name": "app",
   "private": true,
   "scripts": {
-    "dev": "shadow-cljs -A:dev watch app",
-    "release": "shadow-cljs release app"
+    "start": "shadow-cljs -A:dev watch app",
+    "release": "shadow-cljs release app",
+    "server": "shadow-cljs server"
   },
   "devDependencies": {
     "react-refresh": "^0.14.0",
