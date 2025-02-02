@@ -15,7 +15,7 @@ toward another React wrapper, like [UIx](https://github.com/pitch-io/uix) or
 [![Slack](https://img.shields.io/badge/slack-signaali-orange.svg?logo=slack)](https://clojurians.slack.com/app_redirect?channel=signaali)
 [![cljdoc badge](https://cljdoc.org/badge/fi.metosin/signaa-gent)](https://cljdoc.org/d/fi.metosin/signaa-gent)
 
-Signaa-gent is currently [experimental](https://github.com/topics/metosin-experimental).
+Signaa-gent is currently [experimental](https://github.com/metosin/open-source/blob/main/project-status.md#experimental).
 
 Treat it as a toy project *unless* it works for you 😄
 
@@ -55,6 +55,13 @@ See:
 - The [hiccup section](test/app/src/hiccup.cljs)
 - The [Reagent section](test/app/src/reagent.cljs)
 - The [interop section](test/app/src/interop.cljs)
+
+## Running the tests
+
+```shell
+cd test/playwright
+npx playwright test
+```
 
 ## Feedback
 
