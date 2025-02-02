@@ -84,6 +84,7 @@
    [:article
     [:h3 "with-let & finally"]
     [counter "a" global-atom-5]
-    [:div "The content was finalized " @global-atom-6 " times."]
+    [:div "The content was finalized " @global-atom-6 " times."
+     " (also increments on mount in strict-mode - it's normal for the strict mode)"]
     [closable-section "Make the content exist"
      [with-let-finally-component @global-atom-5]]]])

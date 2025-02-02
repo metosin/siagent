@@ -3,7 +3,7 @@
             [app.interop :refer [interop-demo]]
             [app.reagent :refer [reagent-demo]]
             [reagent.core :as r]
-            [uix.core :refer [defui $]]
+            [uix.core :as uix :refer [defui $]]
             [uix.dom :as dom]))
 
 (defui app []
@@ -16,7 +16,9 @@
   (dom/create-root (js/document.getElementById "app")))
 
 (defn render []
-  (dom/render-root ($ app) root))
+  (dom/render-root ($ uix/strict-mode
+                      ($ app))
+                   root))
 
 (defn ^:export init []
   (render))
