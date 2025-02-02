@@ -27,11 +27,7 @@
 (defn react-component-with-children [^js props]
   ($ :div
      (.-title props)
-     ($ :ul {:style {:margin-left "1em"
-                     :padding "0.5em"
-                     :border "1px"
-                     :border-style "solid"
-                     :color (.-color props)}}
+     ($ :ul {:style {:color (.-color props)}}
         (.-children props))))
 
 ;; This is a React component
@@ -78,11 +74,7 @@
     (let [react-comp (r/reactify-component
                        (fn reagent-component [{:keys [title color children]}]
                          [:div title
-                          [:ul {:style {:marginLeft "1em"
-                                        :padding "0.5em"
-                                        :border "1px"
-                                        :borderStyle "solid"
-                                        :color color}}
+                          [:ul {:style {:color color}}
                            children]]))]
       [:> react-comp {:title "My title"
                       :color "dodgerBlue"}
@@ -94,11 +86,7 @@
     (let [reagent-comp (r/adapt-react-class
                          (fn react-component [^js props]
                            ($ :div (.-title props)
-                              ($ :ul {:style {:marginLeft "1em"
-                                              :padding "0.5em"
-                                              :border "1px"
-                                              :borderStyle "solid"
-                                              :color (.-color props)}}
+                              ($ :ul {:style {:color (.-color props)}}
                                  (.-children props)))))]
       [reagent-comp {:title "My title"
                      :color "darkSalmon"}
