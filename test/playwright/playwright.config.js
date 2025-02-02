@@ -73,8 +73,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    // command: "cd ../app && npm run release && npm run server",
-    command: "cd ../app && npm start",
+    command: "cd ../app && npm run release && npm run server",
+    // command: "cd ../app && npm start",
     url: "http://127.0.0.1:8080",
     reuseExistingServer: !process.env.CI,
   },

@@ -22,7 +22,7 @@
       (let [atom-c (r/atom 0)]
         (fn [value-a]
           [:<>
-           "b and c are atoms defined in the wrapping fns."
+           [:aside "b and c are atoms defined in the wrapping fns."]
            [counter "b" atom-b]
            [counter "c" atom-c]
            [:div "value-a + atom-b + atom-c = " (+ value-a @atom-b @atom-c)]])))))
@@ -31,7 +31,7 @@
   (r/with-let [atom-b (r/atom 0)
                atom-c (r/atom 0)]
     [:<>
-     "b and c are atoms defined in the wrapping with-let."
+     [:aside "b and c are atoms defined in the wrapping with-let."]
      [counter "b" atom-b]
      [counter "c" atom-c]
      [:div "value-a + atom-b + atom-c = " (+ value-a @atom-b @atom-c)]]))
@@ -40,7 +40,7 @@
   (r/with-let [atom-b (r/atom 0)
                atom-c (r/atom 0)]
     [:<>
-     "b and c are atoms defined in the wrapping with-let."
+     [:aside "b and c are atoms defined in the wrapping with-let."]
      [counter "b" atom-b]
      [counter "c" atom-c]
      [:div "value-a + atom-b + atom-c = " (+ value-a @atom-b @atom-c)]]
@@ -64,27 +64,27 @@
   [:section {:data-testid "reagent"}
    [:h2 "Reagent features"]
 
-   [:article
+   [:article {:data-testid "reactivity"}
     [:h3 "Component reactivity"]
     [:div
      [counter "a" global-atom-1]
      [counter "b" global-atom-2]
      [sum-atom-value global-atom-1 @global-atom-2]]]
 
-   [:article
+   [:article {:data-testid "fn-in-fn"}
     [:h3 "fn in a fn ..."]
     [counter "a" global-atom-3]
     [fn-in-fn @global-atom-3]]
 
-   [:article
+   [:article {:data-testid "with-let"}
     [:h3 "with-let"]
     [counter "a" global-atom-4]
     [with-let-component @global-atom-4]]
 
-   [:article
+   [:article {:data-testid "with-let-finally"}
     [:h3 "with-let & finally"]
     [counter "a" global-atom-5]
     [:div "The content was finalized " @global-atom-6 " times."
-     " (also increments on mount in strict-mode - it's normal for the strict mode)"]
+     [:aside " (also increments on mount in strict-mode - it's normal for the strict mode)"]]
     [closable-section "Make the content exist"
      [with-let-finally-component @global-atom-5]]]])
