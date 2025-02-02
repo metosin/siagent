@@ -1,8 +1,23 @@
 # Signaa-gent
 
-A rewrite of a subset of Reagent's features, using Signaali for the reactivity.
+A rewrite of a subset of [Reagent](https://github.com/reagent-project/reagent)'s features,
+using [Signaali](https://github.com/metosin/signaali) for the reactivity.
 
-Treat it as a toy project unless it works for you.
+This project was created to help people who want to use [Re-signaali](https://github.com/metosin/re-signaali)
+while still having some Reagent components in their codebase.
+It might be suitable to you if you are in the process of migrating a large Reagent+Re-frame codebase
+toward another React wrapper, like [UIx](https://github.com/pitch-io/uix) or
+[Helix](https://github.com/lilactown/helix).
+
+## Project status
+
+[![Clojars Project](https://img.shields.io/clojars/v/fi.metosin/signaa-gent.svg)](https://clojars.org/fi.metosin/signaa-gent)
+[![Slack](https://img.shields.io/badge/slack-signaali-orange.svg?logo=slack)](https://clojurians.slack.com/app_redirect?channel=signaali)
+[![cljdoc badge](https://cljdoc.org/badge/fi.metosin/signaa-gent)](https://cljdoc.org/d/fi.metosin/signaa-gent)
+
+Signaa-gent is currently [experimental](https://github.com/topics/metosin-experimental).
+
+Treat it as a toy project *unless* it works for you 😄
 
 ## Install
 
@@ -19,8 +34,9 @@ In your deps.edn:
 - Glitch-free reactivity provided by Signaali.
 - No jumping caret issues.
 - Can embed and be embedded into any existing React-based app (React, UIx, Helix, etc ...)
-- Compatible with React 19 (the latest).
-- Compatible with Re-frame 1.4.3 (the latest) via the `fi-metosin/re-signaali` fork.
+- Compatible with [React](https://react.dev/) 19 (the latest).
+- Compatible with [Re-frame](https://github.com/day8/re-frame/) 1.4.3 (the latest)
+  via the [Re-signaali](https://github.com/metosin/re-signaali) fork.
 
 ### Caveats:
 
@@ -42,4 +58,5 @@ See:
 
 ## Feedback
 
-If you tried his library, please let us know how it went.
+If you tried his library, please [let us know](https://clojurians.slack.com/app_redirect?channel=signaali)
+how it went.
