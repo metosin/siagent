@@ -44,17 +44,17 @@ In your deps.edn:
 - Does not cover all the Reagent legacy features:
   - No support for Reagent class components, only functions.
   - No support for Cursor, Track, Wrap.
-  - No createRoot, use another React wrapper like in the [test app](test/app/src/core.cljs).
+  - No createRoot, use another React wrapper like in the [test app](test/app/src/app/core.cljs).
 - No effort was made on the performance side.
 
 ## Parts the Reagent API covered
 
-Everything which is tested in the [test app](test/app/src/core.cljs) is supported.
+Everything which is tested in the [test app](test/app/src/app/core.cljs) is supported.
 
 See:
-- The [hiccup section](test/app/src/hiccup.cljs)
-- The [Reagent section](test/app/src/reagent.cljs)
-- The [interop section](test/app/src/interop.cljs)
+- The [hiccup section](test/app/src/app/hiccup.cljs)
+- The [Reagent section](test/app/src/app/reagent.cljs)
+- The [interop section](test/app/src/app/interop.cljs)
 
 ## Running the tests
 
