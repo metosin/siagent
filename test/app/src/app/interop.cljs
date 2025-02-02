@@ -27,11 +27,11 @@
 (defn react-component-with-children [^js props]
   ($ :div
      (.-title props)
-     ($ :div {:style {:margin-left "1em"
-                      :padding "0.5em"
-                      :border "1px"
-                      :border-style "solid"
-                      :color (.-color props)}}
+     ($ :ul {:style {:margin-left "1em"
+                     :padding "0.5em"
+                     :border "1px"
+                     :border-style "solid"
+                     :color (.-color props)}}
         (.-children props))))
 
 ;; This is a React component
@@ -43,7 +43,7 @@
   [:section {:data-testid "interop"}
    [:h2 "Interop with React"]
 
-   [:article
+   [:article {:data-testid "reagent-with-hooks"}
     [:h3 "Reagent components with hooks"]
     [atom-counter "a" global-atom-1]
 
@@ -53,54 +53,54 @@
     [:h4 "The form [:f> reagent-comp ,,,]"]
     [:f> reagent-sum-component-with-hooks @global-atom-1]]
 
-   [:article
+   [:article {:data-testid "calling-react"}
     [:h3 "Calling React components with props and children"]
 
     [:h4 "The form [:> react-comp {,,,} & hiccup-children]"]
     [:> react-component-with-children {:title "My title"
                                        :color "lightSeaGreen"}
-     [:div "Child 1"]
-     [:div "Child 2"]]
+     [:li "Child 1"]
+     [:li "Child 2"]]
 
     [:h4 "The form [:r> react-comp #js {,,,} & hiccup-children]"]
     [:r> react-component-with-children #js {:title "My title"
                                             :color "mediumOrchid"}
-     [:div "Child 1"]
-     [:div "Child 2"]]]
+     [:li "Child 1"]
+     [:li "Child 2"]]]
 
-   [:article
+   [:article {:data-testid "r/use-reactive"}
     [:h3 "React component reacting to an atom via r/use-reactive hook"]
     [atom-counter "a" global-atom-2]
     [:> react-component-doubling-global-atom-value]]
 
-   [:article
+   [:article {:data-testid "r/reactify-component"}
     [:h3 "Reactify a Reagent component"]
     (let [react-comp (r/reactify-component
                        (fn reagent-component [{:keys [title color children]}]
                          [:div title
-                          [:div {:style {:marginLeft "1em"
-                                         :padding "0.5em"
-                                         :border "1px"
-                                         :borderStyle "solid"
-                                         :color color}}
+                          [:ul {:style {:marginLeft "1em"
+                                        :padding "0.5em"
+                                        :border "1px"
+                                        :borderStyle "solid"
+                                        :color color}}
                            children]]))]
       [:> react-comp {:title "My title"
                       :color "dodgerBlue"}
-        [:div "Child 1"]
-        [:div "Child 2"]])]
+        [:li "Child 1"]
+        [:li "Child 2"]])]
 
-   [:article
+   [:article {:data-testid "r/adapt-react-class"}
     [:h3 "Reagentify a React component"]
     (let [reagent-comp (r/adapt-react-class
                          (fn react-component [^js props]
                            ($ :div (.-title props)
-                              ($ :div {:style {:marginLeft "1em"
-                                               :padding "0.5em"
-                                               :border "1px"
-                                               :borderStyle "solid"
-                                               :color (.-color props)}}
+                              ($ :ul {:style {:marginLeft "1em"
+                                              :padding "0.5em"
+                                              :border "1px"
+                                              :borderStyle "solid"
+                                              :color (.-color props)}}
                                  (.-children props)))))]
       [reagent-comp {:title "My title"
                      :color "darkSalmon"}
-        [:div "Child 1"]
-        [:div "Child 2"]])]])
+        [:li "Child 1"]
+        [:li "Child 2"]])]])
