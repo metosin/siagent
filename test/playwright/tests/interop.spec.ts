@@ -157,7 +157,7 @@ test("r/reactify-component", async ({ page }) => {
       - list:
         - listitem: Child 1
         - listitem: Child 2
-    `);
+  `);
 });
 
 test("r/adapt-react-class", async ({ page }) => {
@@ -171,5 +171,5 @@ test("r/adapt-react-class", async ({ page }) => {
       - list:
         - listitem: Child 1
         - listitem: Child 2
-    `);
+  `);
 });

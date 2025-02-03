@@ -220,3 +220,15 @@ test("with-let-finally", async ({ page }) => {
       - text: The content was finalized 2 times.
   `);
 });
+
+test("controlled-input-element", async ({ page }) => {
+  const article = page
+    .getByTestId("interop")
+    .getByTestId("controlled-input-element");
+  const input = page.getByRole("textbox");
+
+  await input.fill("hello,");
+  await input.pressSequentially(" world!");
+
+  await expect(input).toHaveValue("hello, world!");
+});

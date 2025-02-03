@@ -7,6 +7,7 @@
 (defonce global-atom-4 (r/atom 0))
 (defonce global-atom-5 (r/atom 0))
 (defonce global-atom-6 (r/atom 0))
+(defonce global-atom-7 (r/atom 0))
 
 (defn counter [label atom]
   [:div
@@ -87,4 +88,10 @@
     [:div "The content was finalized " @global-atom-6 " times."
      [:aside " (also increments on mount in strict-mode - it's normal for the strict mode)"]]
     [closable-section "Make the content exist"
-     [with-let-finally-component @global-atom-5]]]])
+     [with-let-finally-component @global-atom-5]]]
+
+   [:article {:data-testid "controlled-input-element"}
+    [:h3 "Controlled input element"]
+    [:input {:value @global-atom-7
+             :on-change (fn [^js event]
+                          (reset! global-atom-7 (-> event .-target .-value)))}]]])
