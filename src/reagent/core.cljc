@@ -174,7 +174,6 @@
   (assert (vector? bindings)
           (str "with-let bindings must be a vector, not " (pr-str bindings)))
   (let [binding-vars (for [[var _expr] (partition 2 bindings)] var)
-        binding-exprs (for [[_var expr] (partition 2 bindings)] expr)
 
         ;; Looks for a potential `finally` clause at the end of `bodies`
         [body-exprs finally-exprs] (let [last-expr (last bodies)]
@@ -182,11 +181,13 @@
                                               (= (first last-expr) 'finally))
                                        [(butlast bodies) (next last-expr)]
                                        [bodies nil]))]
-    `(let [[~@binding-vars] (impl/use-eval-once
-                              (fn []
-                                [~@binding-exprs]))]
-       ~(when (some? finally-exprs)
-          `(impl/use-finally
-             (fn []
-               ~@finally-exprs)))
+    `(let [~@(when (seq bindings)
+               `[[~@binding-vars] (impl/use-eval-once
+                                    (fn []
+                                      (let ~bindings
+                                        [~@binding-vars])))])]
+       ~@(when (some? finally-exprs)
+           `[(impl/use-finally
+               (fn []
+                 ~@finally-exprs))])
        ~@body-exprs)))
