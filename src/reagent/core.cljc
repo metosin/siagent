@@ -168,8 +168,7 @@
          (as-element [reagent-component reagent-props])))))
 
 (defmacro reaction [& bodies]
-  `(reagent.ratom/make-reaction
-     (fn [] ~@bodies)))
+  `(ra/reaction ~@bodies))
 
 (defmacro with-let [bindings & bodies]
   (assert (vector? bindings)
