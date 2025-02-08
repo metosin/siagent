@@ -75,11 +75,13 @@
        (vector? hiccup)
        (let [x (first hiccup)
              meta-key (-> hiccup meta :key)]
+         #_
          (assert (not (instance? cljs.core/MultiFn x))
                  (str "Encountered the multi method `" (impl/compute-fn-display-name x) "`, "
                       "multi methods are not supposed to be used as a Reagent component."))
          (cond
-           (fn? x)
+           (or (fn? x)
+               (instance? cljs.core/MultiFn x))
            (let [[reagent-component & args] hiccup]
              (react/createElement (get-react-wrapper reagent-component)
                                   (-> #js {:comp reagent-component
