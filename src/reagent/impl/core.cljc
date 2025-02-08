@@ -65,6 +65,9 @@
             (cond->
               (seq classes)
               (assoc :className (str/join " " classes)))
+            (cond->
+              (contains? props :style)
+              (update :style update-keys camelize-prop-key))
             (set/rename-keys {:for :htmlFor})
             (update-keys camelize-prop-key)
             (clj->js)))))
