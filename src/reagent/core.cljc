@@ -164,11 +164,8 @@
    (defn reactify-component [reagent-component]
      (fn react-component [^js react-props]
        (let [reagent-props (into {}
-                                 (map (fn [[name value]]
-                                        (let [prop-kw (keyword name)]
-                                          [prop-kw (cond-> value
-                                                     (not= prop-kw :children)
-                                                     (js->clj :keywordize-keys true))])))
+                                 (map (fn [[prop-name prop-value]]
+                                        [(keyword prop-name) prop-value]))
                                  (js/Object.entries react-props))]
          (as-element [reagent-component reagent-props])))))
 
