@@ -75,6 +75,9 @@
        (vector? hiccup)
        (let [x (first hiccup)
              meta-key (-> hiccup meta :key)]
+         (assert (not (instance? cljs.core/MultiFn x))
+                 (str "Encountered the multi method `" (impl/compute-fn-display-name x) "`, "
+                      "multi methods are not supposed to be used as a Reagent component."))
          (cond
            (fn? x)
            (let [[reagent-component & args] hiccup]
