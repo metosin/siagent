@@ -1,5 +1,8 @@
 (ns app.hiccup)
 
+(defn item [props & children]
+  (into [:li props] children))
+
 (defn hiccup-demo []
   [:section {:data-testid "hiccup"}
    [:h2 "Basic hiccup features"]
@@ -29,9 +32,13 @@
     [:ul
      (for [x (range 2)]
        ^{:key x} [:li "^{:key " x "} [:li " x "]"])
+     (for [x (range 2)]
+       [:li {:key x} "[:li {:key " x "} " x "]"])
      [:li "[:li single element in the middle]"]
-     (for [y (range 2)]
-       [:li {:key y} "[:li {:key " y "} " y "]"])]]
+     (for [x (range 2)]
+       ^{:key x} [item "^{:key " x "} [item " x "]"])
+     (for [x (range 2)]
+       [item {:key x} "[item {:key " x "} " x "]"])]]
 
    [:article {:data-testid "fragment"}
     [:h3 "React fragment"]

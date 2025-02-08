@@ -1,5 +1,6 @@
 (ns reagent.impl.core
   (:require #?(:cljs ["react" :as react])
+            [clojure.set :as set]
             [clojure.string :as str]))
 
 #?(:cljs
@@ -39,17 +40,34 @@
   (if (string? prop-key)
     prop-key
     (let [prop-name (name prop-key)]
-      (if (or (str/starts-with? prop-name "data")
-              (str/starts-with? prop-name "aria"))
+      (if (or (str/starts-with? prop-name "data-")
+              (str/starts-with? prop-name "aria-"))
         prop-name
         (let [[start & parts] (str/split prop-name "-")]
           (apply str start (map capitalize parts)))))))
 
 #?(:cljs
-   (defn clj->camel-js-props [props]
-     (-> props
-         (update-keys camelize-prop-key)
-         (clj->js))))
+   (defn clj-props->js-props [props meta-key id classes]
+      (let [react-key (or meta-key (:key props))
+            classes (-> classes
+                        (conj (get props :class))
+                        flatten
+                        (->> (filter some?)
+                             (map name)))]
+        (-> props
+            (cond->
+              (some? react-key)
+              (assoc :key react-key))
+            (cond->
+              (some? id)
+              (assoc :id id))
+            (dissoc :class)
+            (cond->
+              (seq classes)
+              (assoc :className (str/join " " classes)))
+            (set/rename-keys {:for :htmlFor})
+            (update-keys camelize-prop-key)
+            (clj->js)))))
 
 #?(:cljs
    (defn use-eval-once [f]

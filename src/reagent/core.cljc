@@ -2,8 +2,6 @@
   #?(:cljs (:require-macros [reagent.core :refer [reaction with-let]]))
   (:refer-clojure :exclude [atom])
   (:require #?(:cljs ["react" :as react])
-            [clojure.set :as set]
-            [clojure.string :as str]
             [reagent.impl.core :as impl]
             [reagent.ratom :as ra]
             [signaali.reactive :as sr]))
@@ -76,67 +74,66 @@
      (cond
        (vector? hiccup)
        (let [x (first hiccup)
-             key (-> hiccup meta :key)]
+             meta-key (-> hiccup meta :key)]
          (cond
            (fn? x)
            (let [[reagent-component & args] hiccup]
              (react/createElement (get-react-wrapper reagent-component)
                                   (-> #js {:comp reagent-component
                                            :args args}
-                                      (impl/set-key-if-some key))))
+                                      (impl/set-key-if-some (or meta-key
+                                                                (let [first-arg (first args)]
+                                                                  (when (map? first-arg)
+                                                                    (:key first-arg))))))))
 
            (= x :f>) ;; It invokes a Reagent component and make sure that we can call the hooks inside and still deref Ratoms.
            (let [[_f> reagent-component & args] hiccup]
              (react/createElement (get-react-wrapper reagent-component)
                                   (-> #js {:comp reagent-component
                                            :args args}
-                                      (impl/set-key-if-some key))))
+                                      (impl/set-key-if-some (or meta-key
+                                                                (let [first-arg (first args)]
+                                                                  (when (map? first-arg)
+                                                                    (:key first-arg))))))))
 
            (= x :>)
            (let [[_> react-component & args] hiccup
                  [props & children] (if (map? (first args))
                                       args
                                       (cons nil args))]
-             (apply react/createElement react-component
-                                        (-> (impl/clj->camel-js-props props)
-                                            (impl/set-key-if-some key))
-                                        (mapv as-element children)))
+             (apply react/createElement
+                    react-component
+                    (impl/clj-props->js-props props meta-key nil nil)
+                    (mapv as-element children)))
 
            (= x :r>) ;; "r" means "raw". It calls React components.
            (let [[_r> react-component js-props & children] hiccup]
-             (apply react/createElement react-component
-                                        (-> js-props
-                                            (impl/set-key-if-some key))
-                                        (mapv as-element children)))
+             (apply react/createElement
+                    react-component
+                    (-> js-props
+                        (impl/set-key-if-some meta-key))
+                    (mapv as-element children)))
 
            (= x :<>)
            (let [[_<> & args] hiccup
                  [props & children] (if (map? (first args))
                                       args
                                       (cons nil args))]
-             (apply react/createElement react/Fragment
-                                        (-> (clj->js props)
-                                            (impl/set-key-if-some key))
-                                        (mapv as-element children)))
+             (apply react/createElement
+                    react/Fragment
+                    (impl/clj-props->js-props props meta-key nil nil)
+                    (mapv as-element children)))
 
            :else ;; Representation of a DOM element, like :div or "div"
            (let [[dom-element & args] hiccup
                  {:keys [element id classes]} (impl/parse-dom-element (name dom-element))
                  [props & children] (if (map? (first args))
                                       args
-                                      (cons nil args))
-                 classes (into classes (map name) (:class props))]
-             (apply react/createElement element
-                                        (-> props
-                                            (cond-> id (assoc :id id))
-                                            (cond->
-                                              (seq classes)
-                                              (-> (dissoc :class)
-                                                  (assoc :className (str/join " " classes))))
-                                            (set/rename-keys {:for :htmlFor})
-                                            (impl/clj->camel-js-props)
-                                            (impl/set-key-if-some key))
-                                        (mapv as-element children)))))
+                                      (cons nil args))]
+             (apply react/createElement
+                    element
+                    (impl/clj-props->js-props props meta-key id classes)
+                    (mapv as-element children)))))
 
        (seq? hiccup)
        (let [children hiccup]
@@ -145,14 +142,17 @@
        :else
        hiccup)))
 
+;; What should happen when a meta-key is used on the invocation of the resulting reagent component?
+;; Do we want to support that use case or ignore it?
 #?(:cljs
    (defn adapt-react-class [react-component]
      (fn reagent-component [& args]
        (let [[props & children] (if (map? (first args))
                                   args
                                   (cons nil args))]
-         (apply react/createElement react-component
-                (clj->js props)
+         (apply react/createElement
+                react-component
+                (impl/clj-props->js-props props nil nil nil)
                 (mapv as-element children))))))
 
 #?(:cljs

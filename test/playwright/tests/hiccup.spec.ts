@@ -52,9 +52,13 @@ test("Sequences in hiccup are inlined", async ({ page }) => {
       - list:
         - listitem: "^{:key 0} [:li 0]"
         - listitem: "^{:key 1} [:li 1]"
-        - listitem: "[:li single element in the middle]"
         - listitem: "[:li {:key 0} 0]"
         - listitem: "[:li {:key 1} 1]"
+        - listitem: "[:li single element in the middle]"
+        - listitem: "^{:key 0} [item 0]"
+        - listitem: "^{:key 1} [item 1]"
+        - listitem: "[item {:key 0} 0]"
+        - listitem: "[item {:key 1} 1]"
   `);
 });
 

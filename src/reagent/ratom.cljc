@@ -21,7 +21,6 @@
       (sr/add-on-dispose-callback r on-dispose))
     r))
 
-
 (defn reactive? []
   (pos? (stack/count #'sr/observer-stack)))
 
