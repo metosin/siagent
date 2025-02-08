@@ -1,8 +1,7 @@
 (ns reagent.ratom
   #?(:cljs (:require-macros [reagent.ratom :refer [reaction]]))
   (:refer-clojure :exclude [atom])
-  (:require [signaali.reactive :as sr]
-            [signaali.mutable.stack :as stack]))
+  (:require [signaali.reactive :as sr]))
 
 (defn atom [x]
   (sr/create-state x {:propagation-filter-fn not=}))
@@ -22,7 +21,7 @@
     r))
 
 (defn reactive? []
-  (pos? (stack/count #'sr/observer-stack)))
+  (some? (sr/get-current-observer)))
 
 (defmacro reaction [& bodies]
   `(make-reaction
