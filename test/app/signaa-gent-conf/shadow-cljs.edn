@@ -1,0 +1,7 @@
+{:deps {:aliases [:dev]}
+
+ :dev-http {8081 "public"}
+
+ :builds {:app {:target   :browser
+                :modules  {:main {:init-fn app.core/init}}
+                :devtools {:preloads [uix.preload devtools.preload]}}}}
