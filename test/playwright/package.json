@@ -1,12 +1,6 @@
 {
   "name": "playwright",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "private": true,
   "devDependencies": {
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.0"
