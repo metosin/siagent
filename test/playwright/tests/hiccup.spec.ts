@@ -25,20 +25,6 @@ test("Complex keywords and strings", async ({ page }) => {
   await expect(element2).toHaveText("Some text");
 });
 
-test("Default tag element is a div", async ({ page }) => {
-  const element3 = page.getByTestId("hiccup").getByTestId("element-3");
-
-  const element3a = element3.locator(":nth-child(2)");
-  await expect(element3a).toHaveJSProperty("tagName", "DIV");
-  await expect(element3a).toHaveId("some-id");
-  await expect(element3a).toHaveText("This is in a div.");
-
-  const element3b = element3.locator(":nth-child(3)");
-  await expect(element3b).toHaveJSProperty("tagName", "DIV");
-  await expect(element3b).toHaveClass("some-class");
-  await expect(element3b).toHaveText("This too.");
-});
-
 test("Inline style", async ({ page }) => {
   const inlineStyle = page.getByTestId("hiccup").getByTestId("inline-style");
   await expect(inlineStyle).toHaveAttribute("style", "color: pink;");

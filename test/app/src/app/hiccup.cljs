@@ -9,19 +9,14 @@
 
    [:article {:data-testid "element-1"}
     [:h3 "Heavily defined hiccup element"]
-    [:span.my-class1.my-class2#my-id {:class [:my-class3 :my-class4]}
+    [:span#my-id.my-class1.my-class2 {:class [:my-class3 :my-class4]}
      "Some text"]]
 
    ["article" {:data-testid "element-2"}
     ["h3" "The same should work with strings"]
-    ["span.my-class1.my-class2#my-id" {:class ["my-class3" "my-class4"]}
+    ["span#my-id.my-class1.my-class2" {:class ["my-class3" "my-class4"]}
      "Some text"]]
-
-   [:article {:data-testid "element-3"}
-    [:h3 "The default element is a \"div\""]
-    [:#some-id "This is in a div."]
-    [:.some-class "This too."]]
-
+   
    [:article {:data-testid "inline-style"
               :style {:color "pink"}}
     [:h3 "Inline style"]

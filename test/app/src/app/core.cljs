@@ -7,18 +7,22 @@
             [uix.dom :as dom]))
 
 (defui app []
-  ($ :main
-     (r/as-element [hiccup-demo])
-     (r/as-element [reagent-demo])
-     (r/as-element [interop-demo])))
+  ($ uix/strict-mode
+     ($ :main
+        (r/as-element [hiccup-demo])
+        (r/as-element [reagent-demo])
+        (r/as-element [interop-demo]))))
 
 (defonce root
   (dom/create-root (js/document.getElementById "app")))
 
 (defn render []
-  (dom/render-root ($ uix/strict-mode
-                      ($ app))
-                   root))
+  (dom/render-root ($ app) root))
+
+(defn render-in-compatibility-mode []
+  (dom/render ($ app) (js/document.getElementById "app")))
 
 (defn ^:export init []
-  (render))
+  ;;(render)
+  (render-in-compatibility-mode)
+  ,)
