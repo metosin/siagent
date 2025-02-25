@@ -3,7 +3,7 @@
 A rewrite of a subset of [Reagent](https://github.com/reagent-project/reagent)'s features,
 using [Signaali](https://github.com/metosin/signaali) for the reactivity.
 
-This project was created to help people who want to use [Re-signaali](https://github.com/metosin/re-signaali)
+This project was created to help people who want to use [Si-frame](https://github.com/metosin/si-frame)
 while they still have some Reagent components in their codebase.
 It might be suitable to you if you are in the process of migrating a large Reagent+Re-frame codebase
 toward another React wrapper, like [UIx](https://github.com/pitch-io/uix) or
@@ -36,7 +36,7 @@ In your deps.edn:
 - Can embed React components and be embedded into any existing React-based app (React, UIx, Helix, etc ...)
 - Compatible with [React](https://react.dev/) 19 (the latest).
 - Compatible with [Re-frame](https://github.com/day8/re-frame/) 1.4.3 (the latest)
-  via the [Re-signaali](https://github.com/metosin/re-signaali) fork.
+  via the [Si-frame](https://github.com/metosin/si-frame) fork.
 
 ### Caveats:
 
