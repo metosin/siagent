@@ -2,6 +2,7 @@
   (:require [app.hiccup :refer [hiccup-demo]]
             [app.interop :refer [interop-demo]]
             [app.reagent :refer [reagent-demo]]
+            ;;[app.reactivity :refer [reactivity-demo]]
             [reagent.core :as r]
             [uix.core :as uix :refer [defui $]]
             [uix.dom :as dom]))
@@ -11,7 +12,9 @@
      ($ :main
         (r/as-element [hiccup-demo])
         (r/as-element [reagent-demo])
-        (r/as-element [interop-demo]))))
+        (r/as-element [interop-demo])
+        ;;(r/as-element [reactivity-demo])
+        ,)))
 
 (defonce root
   (dom/create-root (js/document.getElementById "app")))
@@ -23,6 +26,6 @@
   (dom/render ($ app) (js/document.getElementById "app")))
 
 (defn ^:export init []
-  ;;(render)
-  (render-in-compatibility-mode)
+  (render)
+  ;;(render-in-compatibility-mode)
   ,)

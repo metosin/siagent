@@ -6,18 +6,18 @@
                               org.clojure/clojurescript {:mvn/version "1.11.132"}}}
 
            ;; clojure -M:outdated --upgrade
-           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1264"}}
+           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1269"}}
                       :main-opts  ["-m" "antq.core"]}
 
            :jar  {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.303"}}
                   :exec-fn      hf.depstar/jar
                   :exec-args    {:sync-pom    true
                                  :group-id    "fi.metosin"
-                                 :artifact-id "signaa-gent"
+                                 :artifact-id "siagent"
                                  :version     "0.1.0"
-                                 :jar         "signaa-gent.jar"}}
+                                 :jar         "siagent.jar"}}
 
            :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "0.2.2"}}
                     :exec-fn    deps-deploy.deps-deploy/deploy
                     :exec-args  {:installer :remote
-                                 :artifact "signaa-gent.jar"}}}}
+                                 :artifact "siagent.jar"}}}}

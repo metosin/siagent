@@ -1,4 +1,4 @@
-# Signaa-gent CHANGELOG
+# Siagent CHANGELOG
 
 We use [Break Versioning][breakver]. The version numbers follow a `<major>.<minor>.<patch>` scheme with the following intent:
 
@@ -12,7 +12,7 @@ We use [Break Versioning][breakver]. The version numbers follow a `<major>.<mino
 
 [breakver]: https://github.com/ptaoussanis/encore/blob/master/BREAK-VERSIONING.md
 
-Signaa-gent is currently [experimental](https://github.com/topics/metosin-experimental).
+Siagent is currently [experimental](https://github.com/topics/metosin-experimental).
 
 ## 0.1.0
 

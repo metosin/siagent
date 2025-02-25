@@ -74,7 +74,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     timeout: 60 * 60 * 1000, // Waiting for shadow-cljs to download its dependencies.
-    command: "cd ../app/signaa-gent-conf && npm install && npm run release && npm run server",
+    command: "cd ../app/siagent-conf && npm install && npm run release && npm run server",
     url: "http://127.0.0.1:8081",
     reuseExistingServer: !process.env.CI,
   },

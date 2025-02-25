@@ -42,27 +42,27 @@
      (when (nil? (.-reactWrapper reagent-component))
        (let [^js wrapper (fn [^js props]
                            (let [component-fn-ref (react/useRef nil)
-                                 hiccup (use-reactive
-                                          (if (nil? (.-current component-fn-ref))
-                                            (loop [component-fn (.-comp props)]
-                                              (let [reactive (reaction
-                                                               (apply component-fn (.-args props)))
-                                                    x @reactive]
-                                                (if (fn? x)
-                                                  ;; Loop until x is not a function.
-                                                  (do
-                                                    (dispose! reactive)
-                                                    (recur x))
-                                                  (do
-                                                    (set! (.-current component-fn-ref) component-fn)
-                                                    reactive))))
-                                            (let [reactive (reaction
-                                                             (apply (.-current component-fn-ref) (.-args props)))]
-                                              ;; To keep the order of the React hooks consistent,
-                                              ;; we need to run the reactive before use-reactive,
-                                              ;; the same as we did in the first run defined above.
-                                              @reactive
-                                              reactive)))]
+                                 hiccup-reactive-node (if (nil? (.-current component-fn-ref))
+                                                        (loop [component-fn (.-comp props)]
+                                                          (let [reactive (reaction
+                                                                           (apply component-fn (.-args props)))
+                                                                x @reactive]
+                                                            (if (fn? x)
+                                                              ;; Loop until x is not a function.
+                                                              (do
+                                                                (dispose! reactive)
+                                                                (recur x))
+                                                              (do
+                                                                (set! (.-current component-fn-ref) component-fn)
+                                                                reactive))))
+                                                        (let [reactive (reaction
+                                                                         (apply (.-current component-fn-ref) (.-args props)))]
+                                                          ;; To keep the order of the React hooks consistent,
+                                                          ;; we need to run the reactive before use-reactive,
+                                                          ;; the same as we did in the first run defined above.
+                                                          @reactive
+                                                          reactive))
+                                 hiccup (use-reactive hiccup-reactive-node)]
                              (as-element hiccup)))]
          (set! (.-displayName wrapper) (impl/compute-fn-display-name reagent-component))
          (set! (.-reactWrapper reagent-component) wrapper)))
